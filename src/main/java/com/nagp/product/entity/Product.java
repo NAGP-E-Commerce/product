@@ -27,11 +27,11 @@ public class Product implements Serializable, Persistable{
 	private String title;	
 	private String description;	
 	private String brand;
-	private String price;
+	private Double price;
 	private String primaryImageUrl;
 	private String secondaryImageUrl;
 	private String categoryCode;
-	private String unit;
+	private Double unit;
 	private String seller;
 	private Boolean active;
 	private Boolean isNew;
