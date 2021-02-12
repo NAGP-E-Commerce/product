@@ -1,5 +1,7 @@
 package com.nagp.product.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,4 +47,8 @@ public class ProductCategoryServiceImpl implements ProductCategoryService{
 		return null;
 	}
 
+	@Override
+	public List<ProductCategory> getCategories() {
+		return productCategoryRepository.findAll();
+	}
 }

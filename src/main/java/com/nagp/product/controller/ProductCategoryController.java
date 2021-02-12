@@ -1,5 +1,8 @@
 package com.nagp.product.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nagp.product.dto.ProductCategoryDTO;
-import com.nagp.product.dto.ProductDTO;
 import com.nagp.product.entity.ProductCategory;
 import com.nagp.product.mapping.ProductCategoryMapping;
 import com.nagp.product.service.ProductCategoryService;
@@ -39,6 +41,18 @@ public class ProductCategoryController {
 		ProductCategory productCategory = productCategoryService.getByProductCategoryName(name);
 		ProductCategoryDTO productCategoryDTODTO = ProductCategoryMapping.getProductCategoryToProductCategoryDTO(productCategory);
 		return ResponseEntity.status(HttpStatus.OK).body(productCategoryDTODTO);
+	}
+	
+	@RequestMapping(path = "productcategory", method = RequestMethod.GET)
+	@ApiOperation("Gets all product category")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ProductCategoryDTO.class) })
+	public ResponseEntity<List<ProductCategoryDTO>> getCategories() {
+		List<ProductCategory> productCategory = productCategoryService.getCategories();
+		List<ProductCategoryDTO> productCategoryDTO = new ArrayList<>();
+		productCategory.forEach(productCat -> {
+			productCategoryDTO.add(ProductCategoryMapping.getProductCategoryToProductCategoryDTO(productCat));
+		});
+		return ResponseEntity.status(HttpStatus.OK).body(productCategoryDTO);
 	}
 	
 	@RequestMapping(path = "productcategory/{name}", method = RequestMethod.DELETE)
