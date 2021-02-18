@@ -1,14 +1,32 @@
 package com.nagp.product.mapping;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.Objects;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
+
 import com.nagp.product.dto.ProductDTO;
+import com.nagp.product.dto.ProductStatus;
 import com.nagp.product.entity.Product;
+import com.nagp.stock.dto.ProductStockDTO;
 
 public class ProductMapping {
 
+	private static final String INVENTORY_SERVICE_URL = "http://localhost:8091/im/api/ecommerce/";
+
+	static RestTemplate restTemplate = new RestTemplate();
+
 	public static ProductDTO getProductToProductDTO(Product product) {
+
 		if (product == null || product.getId() == null) {
 			return null;
 		}
+
 		ProductDTO productDTO = new ProductDTO();
 		productDTO.setId(product.getId());
 		productDTO.setProductId(product.getProductId());
@@ -21,16 +39,28 @@ public class ProductMapping {
 		productDTO.setPrimaryImageUrl(product.getPrimaryImageUrl());
 		productDTO.setSecondaryImageUrl(product.getSecondaryImageUrl());
 		productDTO.setCategoryCode(product.getCategoryCode());
-		productDTO.setUnit(product.getUnit());
 		productDTO.setActive(product.getActive());
 		productDTO.setIsNew(product.getIsNew());
 		productDTO.setIsFeatured(product.getIsFeatured());
 		productDTO.setIsSpecial(product.getIsSpecial());
 		productDTO.setIsBestSeller(product.getIsBestSeller());
-		
+
+		ProductStockDTO productStockDTO = getStockStatus(product.getProductId());
+
+		if (Objects.nonNull(productStockDTO)) {
+			int avilableQuantity = productStockDTO.getQuantity() - productStockDTO.getReserve();
+			productDTO.setAvailableQty(avilableQuantity);
+			productDTO.setStatus(
+					avilableQuantity < 2 ? (avilableQuantity == 0 ? ProductStatus.OUTOFSTOCK : ProductStatus.LOWSTOCK)
+							: ProductStatus.INSTOCK);
+		} else {
+			productDTO.setAvailableQty(0);
+			productDTO.setStatus(ProductStatus.UNAVAILABLE);
+		}
+
 		return productDTO;
 	}
-	
+
 	public static Product getProductDTOToProduct(ProductDTO dto) {
 		if (dto == null) {
 			return null;
@@ -47,13 +77,25 @@ public class ProductMapping {
 		product.setPrimaryImageUrl(dto.getPrimaryImageUrl());
 		product.setSecondaryImageUrl(dto.getSecondaryImageUrl());
 		product.setCategoryCode(dto.getCategoryCode());
-		product.setUnit(dto.getUnit());
+		product.setUnit(Double.valueOf("1"));
 		product.setActive(dto.getActive());
 		product.setIsNew(dto.getIsNew());
 		product.setIsFeatured(dto.getIsFeatured());
 		product.setIsSpecial(dto.getIsSpecial());
 		product.setIsBestSeller(dto.getIsBestSeller());
-		
+
 		return product;
+	}
+
+	private static ProductStockDTO getStockStatus(String productId) {
+
+		URI uri = null;
+		try {
+			uri = new URI(INVENTORY_SERVICE_URL + "inventory/stock/" + productId);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return restTemplate.getForObject(uri, ProductStockDTO.class);
+
 	}
 }
