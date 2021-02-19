@@ -11,12 +11,11 @@ import com.nagp.product.repo.ProductCategoryRepository;
 import com.nagp.product.service.ProductCategoryService;
 
 @Service
-public class ProductCategoryServiceImpl implements ProductCategoryService{
+public class ProductCategoryServiceImpl implements ProductCategoryService {
 
 	@Autowired
 	ProductCategoryRepository productCategoryRepository;
-	
-	
+
 	@Override
 	public ProductCategory getByProductCategoryName(String name) {
 		ProductCategory productCategory = productCategoryRepository.findByName(name);
@@ -36,7 +35,8 @@ public class ProductCategoryServiceImpl implements ProductCategoryService{
 	public Boolean deleteProductCategory(String name) {
 		ProductCategory productCategory = productCategoryRepository.findByName(name);
 		if (productCategory == null) {
-			throw new InvalidPropertyException(ProductCategory.class, "id", "Product Category is not present with the product category name");
+			throw new InvalidPropertyException(ProductCategory.class, "id",
+					"Product Category is not present with the product category name");
 		}
 		productCategoryRepository.deleteById(productCategory.getId());
 		return true;

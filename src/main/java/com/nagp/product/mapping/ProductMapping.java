@@ -2,12 +2,8 @@ package com.nagp.product.mapping;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.Objects;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
 import com.nagp.product.dto.ProductDTO;

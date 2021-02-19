@@ -8,17 +8,17 @@ import org.springframework.stereotype.Repository;
 import com.nagp.product.entity.Product;
 
 @Repository
-public interface ProductRepository extends MongoRepository<Product, String>{
-	
+public interface ProductRepository extends MongoRepository<Product, String> {
+
 	Product findByProductId(String productId);
 
 	Product findByCode(String code);
-	
+
 	List<Product> findByIsNew(Boolean isNew);
-	
+
 	List<Product> findByIsSpecial(Boolean isSpecial);
-	
+
 	List<Product> findByIsBestSeller(Boolean isBestSeller);
-	
+
 	List<Product> findByIsFeatured(Boolean isFeatured);
 }

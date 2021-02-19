@@ -20,13 +20,13 @@ public class ProductCategoryMapping {
 		productCategoryDTO.setSimilarCategory(productCategory.getSimilarCategory());
 		productCategoryDTO.setSuperCategory(productCategory.getSuperCategory());
 		List<ProductDTO> productDTO = new ArrayList<ProductDTO>();
-		for(Product product : productCategory.getProduct()) {
+		for (Product product : productCategory.getProduct()) {
 			productDTO.add(ProductMapping.getProductToProductDTO(product));
 		}
 		productCategoryDTO.setProduct(productDTO);
 		return productCategoryDTO;
 	}
-	
+
 	public static ProductCategory getProductCategoryDTOToProductCategory(ProductCategoryDTO dto) {
 		if (dto == null) {
 			return null;
