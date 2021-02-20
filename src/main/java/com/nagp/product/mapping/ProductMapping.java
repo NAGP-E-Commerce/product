@@ -13,11 +13,9 @@ import com.nagp.stock.dto.ProductStockDTO;
 
 public class ProductMapping {
 
-	private static final String INVENTORY_SERVICE_URL = "http://localhost:8091/im/api/ecommerce/";
-
 	static RestTemplate restTemplate = new RestTemplate();
 
-	public static ProductDTO getProductToProductDTO(Product product) {
+	public static ProductDTO getProductToProductDTO(Product product, String url) {
 
 		if (product == null || product.getId() == null) {
 			return null;
@@ -41,7 +39,7 @@ public class ProductMapping {
 		productDTO.setIsSpecial(product.getIsSpecial());
 		productDTO.setIsBestSeller(product.getIsBestSeller());
 
-		ProductStockDTO productStockDTO = getStockStatus(product.getProductId());
+		ProductStockDTO productStockDTO = getStockStatus(product.getProductId(), url);
 
 		if (Objects.nonNull(productStockDTO)) {
 			int avilableQuantity = productStockDTO.getQuantity() - productStockDTO.getReserve();
@@ -83,11 +81,11 @@ public class ProductMapping {
 		return product;
 	}
 
-	private static ProductStockDTO getStockStatus(String productId) {
+	private static ProductStockDTO getStockStatus(String productId, String url) {
 
 		URI uri = null;
 		try {
-			uri = new URI(INVENTORY_SERVICE_URL + "inventory/stock/" + productId);
+			uri = new URI(url + "inventory/stock/" + productId);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}

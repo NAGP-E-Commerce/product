@@ -10,7 +10,7 @@ import com.nagp.product.entity.ProductCategory;
 
 public class ProductCategoryMapping {
 
-	public static ProductCategoryDTO getProductCategoryToProductCategoryDTO(ProductCategory productCategory) {
+	public static ProductCategoryDTO getProductCategoryToProductCategoryDTO(ProductCategory productCategory, String url) {
 		if (productCategory == null || productCategory.getId() == null) {
 			return null;
 		}
@@ -21,7 +21,7 @@ public class ProductCategoryMapping {
 		productCategoryDTO.setSuperCategory(productCategory.getSuperCategory());
 		List<ProductDTO> productDTO = new ArrayList<ProductDTO>();
 		for (Product product : productCategory.getProduct()) {
-			productDTO.add(ProductMapping.getProductToProductDTO(product));
+			productDTO.add(ProductMapping.getProductToProductDTO(product, url));
 		}
 		productCategoryDTO.setProduct(productDTO);
 		return productCategoryDTO;
