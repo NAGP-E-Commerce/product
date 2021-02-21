@@ -42,6 +42,13 @@ public class ProductController {
 	@Value("${inventory.service.url}")
 	private String INVENTORY_SERVICE_URL;
 
+	@RequestMapping(path = "/test", method = RequestMethod.GET)
+	@ApiOperation("Test Product")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class) })
+	public String test() {
+		return "test product service";
+	}
+
 	@RequestMapping(path = "/{id}", method = RequestMethod.GET)
 	@ApiOperation("Gets product with specific id")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = ProductDTO.class) })
