@@ -171,11 +171,11 @@ public class ProductListingRepositoryImpl implements ProductListingRepository {
 
 	private List<ProductDTO> conversion(List<Product> list, String url) {
 		List<ProductDTO> productList = new ArrayList<>();
-		list.forEach(product -> {
-			ProductMapping.getProductToProductDTO(product, url);
-		});
+		for (Product product : list) {
+			product.setId(product.getProductId());
+			productList.add(ProductMapping.getProductToProductDTO(product, url));
+		}
 		return productList;
-
 	}
 
 }
