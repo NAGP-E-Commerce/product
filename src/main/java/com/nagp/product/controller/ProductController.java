@@ -46,7 +46,7 @@ public class ProductController {
 	@ApiOperation("Test Product")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "OK", response = String.class) })
 	public String test() {
-		return "test product service";
+		return "test product service 2";
 	}
 
 	@RequestMapping(path = "/{id}", method = RequestMethod.GET)
