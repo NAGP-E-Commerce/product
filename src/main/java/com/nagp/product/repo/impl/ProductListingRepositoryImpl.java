@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -16,6 +18,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -56,6 +59,8 @@ public class ProductListingRepositoryImpl implements ProductListingRepository {
 		searchRequest.indices("productmanage");
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 		searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+		searchSourceBuilder.size(40);
+		searchSourceBuilder.timeout(new TimeValue(30, TimeUnit.SECONDS));
 		searchRequest.source(searchSourceBuilder);
 		final List<Product> productList = new ArrayList<>();
 		SearchResponse searchResponse = null;
@@ -80,7 +85,17 @@ public class ProductListingRepositoryImpl implements ProductListingRepository {
 		final SearchRequest searchRequest = new SearchRequest();
 		searchRequest.indices("productmanage");
 		final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-		searchSourceBuilder.query(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("name.keyword", productName)));
+		if (StringUtils.isNotBlank(productName)) {
+			if (!productName.matches("[0-9]+")) {
+				searchSourceBuilder.query(QueryBuilders.matchQuery("name", productName));
+			} else {
+				searchSourceBuilder.query(QueryBuilders.matchQuery("productId", productName));
+			}
+		} else {
+			searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+		}
+		searchSourceBuilder.size(40);
+		searchSourceBuilder.timeout(new TimeValue(30, TimeUnit.SECONDS));
 		searchRequest.source(searchSourceBuilder);
 		final List<Product> productList = new ArrayList<>();
 
@@ -155,13 +170,12 @@ public class ProductListingRepositoryImpl implements ProductListingRepository {
 	}
 
 	private List<ProductDTO> conversion(List<Product> list, String url) {
-        List<ProductDTO> productList = new ArrayList<>();
-        for(Product product: list) {
-            product.setProductId(product.getProductId());
-            product.setId(product.getProductId());
-            productList.add(ProductMapping.getProductToProductDTO(product, url));
-        }
-        return productList;
-    }
+		List<ProductDTO> productList = new ArrayList<>();
+		list.forEach(product -> {
+			ProductMapping.getProductToProductDTO(product, url);
+		});
+		return productList;
+
+	}
 
 }
