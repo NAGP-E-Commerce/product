@@ -8,4 +8,4 @@ spec:
     targetPort: 8090
   selector:
     app: product1
-  type: LoadBalancer
+  type: ClusterIP
