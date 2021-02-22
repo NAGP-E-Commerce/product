@@ -157,6 +157,7 @@ public class ProductListingRepositoryImpl implements ProductListingRepository {
 	private List<ProductDTO> conversion(List<Product> list, String url) {
         List<ProductDTO> productList = new ArrayList<>();
         for(Product product: list) {
+            product.setProductId(product.getProductId());
             product.setId(product.getProductId());
             productList.add(ProductMapping.getProductToProductDTO(product, url));
         }
