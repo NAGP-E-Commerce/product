@@ -4,10 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nagp.product.dto.ProductDTO;
 import com.nagp.product.entity.Product;
+import com.nagp.product.repo.ProductListingRepository;
 import com.nagp.product.repo.ProductRepository;
 import com.nagp.product.service.ProductService;
 
@@ -16,6 +19,12 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	ProductRepository productRepository;
+
+	@Autowired
+	ProductListingRepository productListingRepository;
+
+	@Value("${inventory.service.url}")
+	private String INVENTORY_SERVICE_URL;
 
 	@Override
 	public Product getByProductId(String id) {
@@ -87,5 +96,27 @@ public class ProductServiceImpl implements ProductService {
 	public List<Product> findAllFeaturedProducts() {
 		List<Product> productList = productRepository.findByIsFeatured(true);
 		return productList;
+	}
+
+	@Override
+	public List<ProductDTO> getAllESProductInfo() {
+		return productListingRepository.findAllProductDetailsFromElastic(INVENTORY_SERVICE_URL);
+	}
+
+	@Override
+	public List<ProductDTO> getESProductDataByName(String productName) {
+		return productListingRepository.findAllProductDataByNameFromElastic(productName, INVENTORY_SERVICE_URL);
+	}
+
+	@Override
+	public List<ProductDTO> getESProductDataByCode(String productCode) {
+		return productListingRepository.findAllProductDataByCodeFromElastic(productCode, INVENTORY_SERVICE_URL);
+	}
+
+	@Override
+	public List<ProductDTO> getESProductDataByCategoryCode(String categoryCode) {
+		return productListingRepository.findAllProductDataByCategoryCodeFromElastic(categoryCode,
+				INVENTORY_SERVICE_URL);
+
 	}
 }
